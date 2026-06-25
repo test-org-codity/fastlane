@@ -25,7 +25,7 @@ module Fastlane
         # We'll only do this, if the lane specified isn't a platform, as we want to list all platforms then
 
         # Make sure that's not a lane without a platform
-        unless ff.runner.available_lanes.include?(lane)
+        unless ff.runner.available_lanes.any? { |available_lane| available_lane.name == lane }
           platform ||= Actions.lane_context[Actions::SharedValues::DEFAULT_PLATFORM]
         end
       end

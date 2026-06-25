@@ -80,26 +80,10 @@ module Fastlane
     def available_lanes(filter_platform = nil, namespaces: [])
       all = []
 
-      # require 'pp'
-      # pp lanes
-      
-      def find_all_lanes(lanes)
-        lanes.map do |k, v|
-          if v.kind_of?(Hash)
-            find_all_lanes(v)
-          else
-            v
-          end
-        end.flatten
-      end
-
       lanes.each do |platform, platform_lanes|
         next if filter_platform && filter_platform.to_s != platform.to_s # skip actions that don't match
 
-        things = find_all_lanes(platform_lanes)
-
-        things.each do |lane|
-          # this did return string now its the lane
+        find_all_lanes(platform_lanes).each do |lane|
           all << lane unless lane.is_private
         end
       end
@@ -364,7 +348,7 @@ module Fastlane
 
       
 
-      if !override && platform_lanes.dig(keys)
+      if !override && platform_lanes.dig(*keys)
         UI.user_error!("Lane '#{lane.name}' was defined multiple times!")
       end
 
@@ -430,6 +414,14 @@ module Fastlane
 
     def error_blocks
       @error_blocks ||= {}
+    end
+
+    private
+
+    def find_all_lanes(lanes)
+      lanes.map do |_k, v|
+        v.kind_of?(Hash) ? find_all_lanes(v) : v
+      end.flatten
     end
   end
 end
