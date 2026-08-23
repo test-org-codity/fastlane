@@ -66,12 +66,12 @@ module Spaceship
         return "apps"
       end
 
-      def removed_from_sale?
-        ready_for_distribution = get_ready_for_distribution_app_store_version(includes: nil)
+      def removed_from_sale?(platform: nil, client: nil)
+        ready_for_distribution = get_ready_for_distribution_app_store_version(client: client, platform: platform, includes: nil)
         return true if ready_for_distribution.nil?
-        territoryAvailabilities = get_app_availabilities.territory_availabilities
-        availabilities = territoryAvailabilities.map(&:available)
-        return availabilities.all?(false)
+        territory_availabilities = get_app_availabilities(client: client).territory_availabilities
+        availabilities = territory_availabilities.map(&:available)
+        return availabilities.all? { |availability| availability == false }
       end
 
       #
